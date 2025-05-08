@@ -3,22 +3,27 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "tsc-watch --outDir dist --onSuccess \"node dist/src/index.js\""
+    "dev": "vite",
+    "build": "vite build",
+    "manual": "tsc-watch --outDir dist --onSuccess \"node dist/src/index.js\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
     "@vue/compiler-core": "^3.5.13",
     "@vue/compiler-dom": "^3.5.13",
     "@vue/compiler-sfc": "^3.5.13",
     "@vue/compiler-ssr": "^3.5.13",
     "hash-sum": "^2.0.0",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-loader": "^17.4.2"
   },
   "devDependencies": {
     "@types/node": "^22.15.14",
     "less": "^4.3.0",
-    "tsc-watch": "^6.2.1"
+    "tsc-watch": "^6.2.1",
+    "vite": "^6.3.5"
   }
 }

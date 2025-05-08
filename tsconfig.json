@@ -3,6 +3,9 @@
     "rootDir": ".",
     "outDir": "dist/",
     "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
   },
-  "include": ["src", "test"]
+  "include": ["src", "test"],
+  "exclude": ["src/main.ts"]
 }

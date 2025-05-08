@@ -4,6 +4,7 @@ import {
   compileTemplate,
   parse,
 } from "@vue/compiler-sfc";
+import { compile } from "@vue/compiler-dom";
 import type {
   SFCParseResult,
   SFCTemplateBlock,
@@ -13,25 +14,29 @@ import type {
   SFCTemplateCompileResults,
   SFCStyleCompileResults,
 } from "@vue/compiler-sfc";
-import { sfcString } from "./sfcString";
+import fs from "fs";
+import { generateExecutableCode } from "./utils";
+import { resolve } from "path";
 import { createCommonParams, resolveFeatures } from "./params";
 import type { Params } from "./params";
-import fs from "fs";
+// 使用绝对路径
+const vuePath = resolve(process.cwd(), "src/App.vue");
+const sfcString = fs.readFileSync(vuePath, "utf-8");
 const commonParams: Params = createCommonParams(sfcString, {
   filename: "sssss.vue",
 });
 const parseValue: SFCParseResult = parse(sfcString);
 const descriptor: SFCDescriptor = parseValue.descriptor;
-resolveFeatures(descriptor, commonParams);
-const template: SFCTemplateBlock = descriptor.template;
+const template: SFCTemplateBlock | null = descriptor.template;
 const script: SFCDescriptor = descriptor;
 const style: SFCStyleBlock = descriptor.styles[0];
+resolveFeatures(descriptor, commonParams);
 const compilerScript: SFCScriptBlock = compileScript(script, {
   ...commonParams,
 });
 const compilerTemplate: SFCTemplateCompileResults = compileTemplate({
   ...commonParams,
-  source: template.content,
+  source: template?.content ?? "",
   scoped: commonParams.features.hasScoped,
   id: `data-v-${commonParams.id}`,
   compilerOptions: {
@@ -44,28 +49,13 @@ const compilerStyle: SFCStyleCompileResults = compileStyle({
   preprocessLang: "less",
   scoped: commonParams.features.hasScoped,
 });
-console.log(commonParams);
-
 fs.writeFileSync(
-  "./dist/output.js",
-  generateExecutableCode(
-    compilerScript.content,
-    compilerTemplate.code,
-    compilerStyle.code
-  ),
+  "dist/output.js",
+  generateExecutableCode({
+    scriptContent: compilerScript.content,
+    templateCode: compilerTemplate.code,
+    styleCode: compilerStyle.code,
+    id: commonParams.id,
+  }),
   "utf-8"
 );
-function generateExecutableCode(
-  scriptContent: string,
-  templateCode: string,
-  styleCode: string
-) {
-  return `
-    ${scriptContent}
-    ${templateCode}
-    export const __scopeId = 'data-v-${commonParams.id}'
-    const style = document.createElement('style');
-    style.textContent = \`${styleCode}\`;
-    document.head.appendChild(style);
-  `;
-}

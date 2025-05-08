@@ -24,14 +24,14 @@ export const createCommonParams = (
   source: string,
   options?: CompilerOptions
 ): Params => {
-  const filename = options.filename;
-  const id = hashId(options.filename + source);
+  const filename = options?.filename;
+  const id = hashId(options?.filename + source);
   return {
     addedCodeList: [],
     addedProps: [],
     features: {},
     isProd: false,
-    filename,
+    filename: filename ?? "",
     id,
     options: options ?? {},
   };
